@@ -1,0 +1,48 @@
+############ count
+
+resource "aws_instance" "myinc"
+  count  = 4
+  ami  = " ami-a7c8v8sdsd9 "
+  instance_type = "t2.micro"
+  tags = {
+     Name = "instance-${count.index+1}"
+  }  
+}
+
+############## depends_on
+
+resource "aws_security_group" "mysc"
+  name = "example-depends"
+  descripton = "........"
+
+}
+
+resource "aws_instance" "default"
+   ami = "ami-ha7shsdsgf7san8"
+   instance_type = "t2.micro"
+   subnet_id = "subnet-023764537"
+   key_name = "delhi"
+   depends_on = [aws_security_group.mysc]
+
+}
+
+
+        
+################################################# for_each
+
+  locals {
+    ami_ids = {[ami-as7dghss6dd8sh88 , ami-hsh678767sdh89 ]}
+  }
+
+  resource " aws_instance" "mysc"
+     for_each = local.ami-id
+     ami = each.key
+     instance_type = "t2.micro"
+     tags = {
+
+      Name = "instance-$(each_key)"
+
+     }
+  }
+
+  
