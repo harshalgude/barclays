@@ -1,0 +1,82 @@
+########## file
+---
+-hosts: all     
+ become: true
+ tasks: 
+      -name: create a file 
+       file: path=/var/lib/   state=touch
+
+
+############## install packages
+
+---
+-hosts: all
+ become: true
+ tasks: 
+       -name: install nginx
+        apt: name=nginx state=present
+
+       -name: install git
+        apt: name=git  state=present
+
+
+################## multi directory or with_items
+
+---
+-hosts: all
+ become: true
+ tasks:
+      -name: create multiple directories
+       file: path="{{item}}" state=directory
+       with_items:
+                 - /var/v1
+                 - /var/v2
+
+######################## multiple packages in loop
+
+---
+-hosts: all
+ become: true
+ tasks: 
+      -name: install  multiple packages
+       apt: 
+           name: "{{item}}"
+           state: present
+           update_cache: yes 
+       loop:
+           - vim
+           - git
+           - curl
+
+#################### multiple os
+
+---
+-hosts: all
+ become: yes/true
+ tasks:
+      -name: install package in multiple os
+       apt: name=git  state=present
+       when: ansible_os_family == "Debian"
+
+      -name:install package
+       yum: name=git  state=present
+       when: ansible_os_family == "RedHat"
+
+
+################## handlers & notifiers
+
+---
+-hosts: all
+ become: true
+ tasks:
+      -name: install vsftpd
+       yum:
+          name: vsftpd
+          state: present
+       notify: restart_vsftpd
+
+ handlers:
+       -name: restart_vsftpd
+        service: 
+           name: vsftpd
+           state: restarted
