@@ -1,0 +1,115 @@
+################## pods
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  labels:
+      app: myapp
+      type: fornt-end
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx  
+  # if want to port      
+      ports :
+        containerports: 80
+
+#################### replicasets
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+    name: myapp
+    labels:
+       app: myapp
+       type: fornt-end
+spec:
+   template :
+      metadeta:
+         name: myapp-pod
+         labels:
+             app: myapp
+             type: front-end
+      spec:
+         containers:
+         -name: nginx-container
+          image: nginx
+  replicas: 6
+  selector:
+         matchlabels:
+             type: front-end
+
+
+######################## deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: myapp-deployment
+   labels:
+     app: my-app
+     tier: forntend
+spec:
+   template:
+     metadata:
+       name: myapp-pod
+       labels:
+          app: myapp
+          type: fornt-end
+      spec:
+        containers:
+        - name: nginx-container
+          image: nginx:latest
+replicas: 3
+selector:
+  matchLabels:
+    type: fornt-end
+
+
+##################################### services ################################
+
+
+
+########### nodeport ############
+
+apiVersion: v1
+kind: Service
+metadata:
+   name: myapp-service
+spec:
+    type: NodePort
+    ports:
+      - targetPort: 80
+        port: 80   
+        nodePort: 30009
+
+
+############### cluster ip #############
+
+apiVersion: v1
+kind: Service
+metadata:
+   name: back-end
+spec:
+    type: ClusterIP
+    ports:
+      - targetPort: 80
+        port: 80   
+
+############### load balancer #############
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: service-nginx
+    labels:
+      app: nginx-application
+spec:
+  selector:
+    app: nginx-application
+  type: LoadBalancer
+  ports:
+  - nodePort: 31000
+    port: 80
+    targetPort: 80
