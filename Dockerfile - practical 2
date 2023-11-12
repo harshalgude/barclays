@@ -1,0 +1,15 @@
+
+
+FROM    ubuntu
+RUN     apt-get update -y &&  apt-get install nginx -y
+EXPOSE  80
+# to start nginx
+CMD     [ "/usr/sbin/nginx"]
+
+
+
+FROM     ubuntu
+WORKDIR  /tmp
+RUN      echo " hello world " > /tmp/testfile
+COPY     testfile1 /tmp
+ADD      test.tar.gz /tmp
